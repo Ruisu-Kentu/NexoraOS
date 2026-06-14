@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Session protection — redirect to login if not authenticated
+    fetch('/NexoraOs/api/check_session.php')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.authenticated) {
+          window.location.href = '/NexoraOs/login.html';
+        } else {
+          window.loginTime = data.login_time;
+          window.addEventListener('DOMContentLoaded', () => {
+            const el = document.getElementById('taskbar-username');
+            if (el) el.textContent = '👤 ' + data.username;
+          });
+    }
+  });
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NexoraOS</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <style>
+    /* Preload fonts for better performance */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  </style>
+</head>
+<body>
+
+  <!-- DESKTOP -->
+  <div id="desktop">
+
+    <!-- UNIFIED DESKTOP GRID -->
+    <div id="desktop-grid">
+
+      <!-- SYSTEM APP ICONS -->
+   <!-- My Documents -->
+    <div class="desktop-icon" ondblclick="openWindow('myDocuments')">
+      <div class="dicon-img"><i data-lucide="folder"></i></div>
+      <span>My Documents</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('notepad')">
+      <div class="dicon-img"><i data-lucide="file-text"></i></div>
+      <span>Notepad</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('terminal')">
+      <div class="dicon-img"><i data-lucide="terminal"></i></div>
+      <span>Terminal</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('taskManager')">
+      <div class="dicon-img"><i data-lucide="settings"></i></div>
+      <span>Task Manager</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('recycleBin')">
+      <div class="dicon-img"><i data-lucide="trash-2"></i></div>
+      <span>Recycle Bin</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('about')">
+      <div class="dicon-img"><i data-lucide="info"></i></div>
+      <span>About</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('shortcutsHelp')">
+      <div class="dicon-img"><i data-lucide="keyboard"></i></div>
+      <span>Shortcuts</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('calculator')">
+      <div class="dicon-img"><i data-lucide="calculator"></i></div>
+      <span>Calculator</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('nexoraAI')">
+      <div class="dicon-img"><i data-lucide="bot"></i></div>
+      <span>Nexora AI</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openDashboard()">
+      <div class="dicon-img"><i data-lucide="layout-dashboard"></i></div>
+      <span>Dashboard</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('nexoraBrowser')">
+      <div class="dicon-img"><i data-lucide="globe"></i></div>
+      <span>Browser</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('wallpaperBrowser')">
+      <div class="dicon-img"><i data-lucide="image"></i></div>
+      <span>Wallpapers</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('dictionary')">
+      <div class="dicon-img"><i data-lucide="book-open"></i></div>
+      <span>Dictionary</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('currency')">
+      <div class="dicon-img"><i data-lucide="landmark"></i></div>
+      <span>Currency</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('weather')">
+      <div class="dicon-img"><i data-lucide="cloud-sun"></i></div>
+      <span>Weather</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('nexoraNews')">
+      <div class="dicon-img"><i data-lucide="newspaper"></i></div>
+      <span>News</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('nasaApod')">
+      <div class="dicon-img"><i data-lucide="sun"></i></div>
+      <span>Space Explorer</span>
+    </div>
+
+    <div class="desktop-icon" ondblclick="openWindow('nexoraMaps')">
+      <div class="dicon-img"><i data-lucide="map"></i></div>
+      <span>NexoraMaps</span>
+    </div>
+
+
+      <!-- DESKTOP FOLDERS INJECTED HERE BY JS -->
+      <div id="desktop-folder-grid"></div>
+
+    </div>
+
+
+    <!-- WINDOWS WILL BE INJECTED HERE BY JAVASCRIPT -->
+    <div id="windows-container"></div>
+
+        <!-- CONTEXT MENUS -->
+    <div id="context-menu" class="context-menu-box">
+      <div class="context-item" onclick="contextOpen()">Open</div>
+      <div class="context-item" onclick="contextRename()">Rename</div>
+      <div class="context-item" onclick="contextCopy()">Copy</div>
+      <div class="context-divider"></div>
+      <div class="context-item context-danger" onclick="contextDelete()">Delete</div>
+    </div>
+
+   <div id="folder-context-menu" class="context-menu-box">
+      <div class="context-item" onclick="folderContextOpen()">Open</div>
+      <div class="context-item" onclick="folderContextRename()">Rename</div>
+      <div class="context-item" onclick="folderContextCopy()">Copy</div>
+      <div class="context-divider"></div>
+      <div class="context-item context-danger" onclick="folderContextDelete()">Delete</div>
+    </div>
+
+    <div id="desktop-folder-context-menu" class="context-menu-box">
+      <div class="context-item" onclick="desktopFolderOpen()">Open</div>
+      <div class="context-item" onclick="desktopFolderRename()">Rename</div>
+      <div class="context-divider"></div>
+      <div class="context-item context-danger" onclick="desktopFolderDelete()">Delete</div>
+    </div>
+
+    <div id="upload-context-menu" class="context-menu-box">
+      <div class="context-item" id="upload-context-action" onclick="uploadContextAction()">Open</div>
+      <div class="context-item" onclick="uploadContextRename()">Rename</div>
+      <div class="context-divider"></div>
+      <div class="context-item context-danger" onclick="uploadContextDelete()">Delete</div>
+    </div>
+
+    <div id="bin-context-menu" class="context-menu-box">
+      <div class="context-item" onclick="binContextRestore()">Restore</div>
+      <div class="context-divider"></div>
+      <div class="context-item context-danger" onclick="binContextPermanentDelete()">Delete Permanently</div>
+    </div>
+
+    <div id="bin-folder-context-menu" class="context-menu-box">
+      <div class="context-item" onclick="binFolderRestore()">Restore</div>
+      <div class="context-divider"></div>
+      <div class="context-item context-danger" onclick="binFolderPermanentDelete()">Delete Permanently</div>
+    </div>
+
+    <!-- DESKTOP CONTEXT MENU -->
+    <div id="desktop-context-menu" class="context-menu-box">
+  <div class="context-item" onclick="showDesktopNewFolder()">
+    <i data-lucide="folder-plus"></i> New Folder
+  </div>
+  <div class="context-item" onclick="refreshDesktop()">
+    <i data-lucide="refresh-cw"></i> Refresh
+  </div>
+  <div class="context-divider"></div>
+  <div class="context-item" onclick="showPersonalize()">
+    <i data-lucide="palette"></i> Personalize
+  </div>
+</div>
+
+    <!-- PERSONALIZE PANEL -->
+    <div id="personalize-modal">
+      <div id="personalize-box">
+        <div id="personalize-header">
+          <span>🎨 Personalize Desktop</span>
+          <button onclick="closePersonalize()">✕</button>
+        </div>
+        <div id="personalize-body">
+          <p>Upload an image to use as your desktop wallpaper.</p>
+          <div id="wallpaper-preview-wrap">
+            <img id="wallpaper-preview" src="" alt="" style="display:none;"/>
+            <span id="wallpaper-placeholder">No wallpaper set</span>
+          </div>
+          <div id="personalize-actions">
+            <button class="toolbar-btn" onclick="document.getElementById('wallpaper-input').click()">
+              📂 Choose Image
+            </button>
+            <button class="toolbar-btn" onclick="applyWallpaper()" id="apply-wallpaper-btn" style="display:none;">
+              ✅ Apply
+            </button>
+            <button class="toolbar-btn" onclick="removeWallpaper()">
+              🗑️ Remove Wallpaper
+            </button>
+          </div>
+          <input type="file" id="wallpaper-input" accept="image/*"
+            style="display:none;" onchange="previewWallpaper(event)"/>
+        </div>
+      </div>
+    </div>
+
+        <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container"></div>
+
+    <!-- TASKBAR -->
+    <div id="taskbar">
+      <div id="taskbar-left">
+        <span id="os-name">Nexora OS</span>
+      </div>
+        <div id="taskbar-right">
+        <span id="taskbar-username" style="font-size:12px; color:#00ffc8; letter-spacing:2px; margin-right: 13px;"></span>
+        <span id="clock">00:00:00</span>
+        <button id="lock-btn-taskbar" onclick="lockScreen()">🔒</button>
+        <button id="logout-btn" onclick="logoutUser()">🚀</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="assets/js/lucide.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+</script>
+
+  <!-- SCRIPTS -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+</html>

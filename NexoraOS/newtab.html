@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NexoraOS New Tab</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      gap: 28px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0,255,200,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .newtab-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 1;
+    }
+
+    .newtab-logo .logo-n {
+      font-size: 64px;
+      font-weight: 700;
+      color: #00ffc8;
+      text-shadow: 0 0 30px rgba(0,255,200,0.6), 0 0 60px rgba(0,255,200,0.3);
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+
+    .newtab-logo .logo-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 6px;
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    .newtab-clock {
+      font-size: 36px;
+      font-weight: 300;
+      color: #ffffff;
+      letter-spacing: 4px;
+      z-index: 1;
+      text-shadow: 0 0 20px rgba(255,255,255,0.15);
+    }
+
+    .newtab-date {
+      font-size: 13px;
+      color: #666;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: -20px;
+      z-index: 1;
+    }
+
+    .newtab-search {
+      display: flex;
+      align-items: center;
+      z-index: 1;
+      width: 480px;
+      max-width: 90vw;
+    }
+
+    .newtab-search input {
+      flex: 1;
+      padding: 12px 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,255,200,0.25);
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .newtab-search input::placeholder { color: #555; }
+
+    .newtab-search input:focus {
+      border-color: rgba(0,255,200,0.6);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .newtab-search button {
+      padding: 12px 18px;
+      background: #00ffc8;
+      border: none;
+      border-radius: 0 8px 8px 0;
+      color: #0a0a0f;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
+
+    .newtab-search button:hover {
+      background: #00e6b4;
+      box-shadow: 0 0 16px rgba(0,255,200,0.4);
+    }
+
+    .newtab-bookmarks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      z-index: 1;
+      justify-content: center;
+      max-width: 600px;
+    }
+
+    .bookmark-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: #aaa;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+      min-width: 70px;
+    }
+
+    .bookmark-btn:hover {
+      background: rgba(0,255,200,0.08);
+      border-color: rgba(0,255,200,0.3);
+      color: #00ffc8;
+      transform: translateY(-2px);
+    }
+
+    .bookmark-btn svg {
+      width: 22px;
+      height: 22px;
+      stroke: #aaa;
+      transition: stroke 0.2s;
+    }
+
+    .bookmark-btn:hover svg {
+      stroke: #00ffc8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGO -->
+  <div class="newtab-logo">
+    <div class="logo-n">N</div>
+    <div class="logo-name">NexoraOS</div>
+  </div>
+
+  <!-- CLOCK -->
+  <div class="newtab-clock" id="newtab-clock">00:00:00</div>
+  <div class="newtab-date" id="newtab-date">Monday, January 1</div>
+
+  <!-- SEARCH -->
+  <div class="newtab-search">
+    <input
+      type="text"
+      id="newtab-search-input"
+      placeholder="Search with Bing or enter a URL..."
+      onkeydown="handleNewtabSearch(event)"
+    />
+    <button onclick="doNewtabSearch()">Search</button>
+  </div>
+
+    <!-- BOOKMARKS -->
+  <div class="newtab-bookmarks">
+    <a class="bookmark-btn" onclick="navigateFromNewtab('https://www.wikipedia.org')">
+      <i data-lucide="book-open"></i>
+      <span>Wikipedia</span>
+    </a>
+    <a class="bookmark-btn" onclick="navigateFromNewtab('https://archive.org')">
+      <i data-lucide="archive"></i>
+      <span>Archive</span>
+    </a>
+    <a class="bookmark-btn" onclick="navigateFromNewtab('https://www.britannica.com')">
+      <i data-lucide="library"></i>
+      <span>Britannica</span>
+    </a>
+    <a class="bookmark-btn" onclick="navigateFromNewtab('https://www.wikibooks.org')">
+      <i data-lucide="bookmark"></i>
+      <span>Wikibooks</span>
+    </a>
+    <a class="bookmark-btn" onclick="navigateFromNewtab('https://www.gutenberg.org')">
+      <i data-lucide="book"></i>
+      <span>Gutenberg</span>
+    </a>
+    <a class="bookmark-btn" onclick="navigateFromNewtab('https://openlibrary.org')">
+      <i data-lucide="book-copy"></i>
+      <span>Open Library</span>
+    </a>
+    <a class="bookmark-btn" onclick="navigateFromNewtab('https://plato.stanford.edu')">
+      <i data-lucide="graduation-cap"></i>
+      <span>Philosophy</span>
+    </a>
+    <a class="bookmark-btn" onclick="navigateFromNewtab('https://www.sciencedaily.com')">
+      <i data-lucide="flask-conical"></i>
+      <span>Science</span>
+    </a>
+  </div>
+
+  <!-- Lucide self-hosted -->
+  <script src="assets/js/lucide.min.js"></script>
+  <script>
+    // Initialize icons immediately
+    lucide.createIcons();
+
+    // Clock
+    function updateNewtabClock() {
+      const now = new Date();
+      const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      const months = ['January','February','March','April','May','June',
+                      'July','August','September','October','November','December'];
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('newtab-clock').textContent = `${h}:${m}:${s}`;
+      const dayName   = days[now.getDay()];
+      const monthName = months[now.getMonth()];
+      const date      = now.getDate();
+      document.getElementById('newtab-date').textContent = `${dayName}, ${monthName} ${date}`;
+    }
+
+    updateNewtabClock();
+    setInterval(updateNewtabClock, 1000);
+
+    // Search
+    function doNewtabSearch() {
+      const val = document.getElementById('newtab-search-input').value.trim();
+      if (!val) return;
+      let url;
+      try {
+        const test = new URL(val.startsWith('http') ? val : 'https://' + val);
+        if (test.hostname.includes('.')) {
+          url = test.href;
+        } else {
+          throw new Error('not a url');
+        }
+      } catch {
+        url = 'https://www.bing.com/search?q=' + encodeURIComponent(val);
+      }
+      window.parent.postMessage({ type: 'newtab-navigate', url }, '*');
+    }
+
+    function handleNewtabSearch(e) {
+      if (e.key === 'Enter') doNewtabSearch();
+    }
+
+    function navigateFromNewtab(url) {
+      window.parent.postMessage({ type: 'newtab-navigate', url }, '*');
+    }
+  </script>
+
+</body>
+</html>
